@@ -1,0 +1,10 @@
+// get into db
+mysql -u root -pccelder tweets
+
+// create new table for Q4
+CREATE TABLE q4(tweetid bigint unsigned NOT NULL, userid TEXT, username TEXT, thetimestamp TEXT, thetext TEXT, hashtag TEXT, ip TEXT, coordinates TEXT, repliedby TEXT, reply_count TEXT, mentioned TEXT, mentioned_count TEXT, favoritedby TEXT, favorite_count TEXT, useragent TEXT, filter_level TEXT, lang TEXT, PRIMARY KEY (tweetid)) ENGINE = MyISAM;
+
+// configure db
+sudo vim /etc/mysql/my.cnf
+key_buffer=32M
+max_connections=50
