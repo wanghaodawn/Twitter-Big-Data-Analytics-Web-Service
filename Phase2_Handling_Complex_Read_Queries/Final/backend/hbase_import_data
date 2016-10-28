@@ -1,0 +1,32 @@
+// create EMR with aws cli
+aws emr create-cluster --tags "15619project"="phase2" "15619backend"="hbase" --name "HBaseEMR" --ami-version 3.9.0 --applications Name=HBase --use-default-roles --ec2-attributes KeyName=team,SubnetId=subnet-3f0ca067 --instance-groups InstanceGroupType=MASTER,InstanceType=m1.large,InstanceCount=1,BidPrice=0.1 InstanceGroupType=CORE,BidPrice=0.1,InstanceType=m4.large,InstanceCount=2 --termination-protected --bootstrap-action Path=s3://elasticmapreduce/bootstrap-actions/configure-hbase-daemons,Args=["--hbase-zookeeper-opts=-Xmx4096m -XX:GCTimeRatio=9","--hbase-master-opts=-Xmx8192m","--hbase-regionserver-opts=-Xmx8192m"]
+
+// after wget
+// put the file into HDFS to prepare for HBase loading
+sudo su - hdfs
+
+hdfs dfs -put /q3useridV3 /
+
+// get into hbase shell
+hbase shell
+
+// create htable
+create 'q2hbaseV4’, {NAME => 'data', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'SNAPPY', BLOCKSIZE => '131072', IN_MEMORY => 'true', BLOCKCACHE => 'true'}
+
+sudo -u hdfs hbase org.apache.hadoop.hbase.util.RegionSplitter test_table HexStringSplit -c 32 -f data
+
+//create 'q3hbaseV4’, {NAME => 'data', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'SNAPPY', IN_MEMORY => 'true', BLOCKCACHE => 'true'}
+// exit hbase
+exit
+
+sudo su - hdfs
+
+// prepare data into table
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.bulk.output=/storeDataFileOutput1 -Dimporttsv.columns="HBASE_ROW_KEY,data:info," q2hbaseV4 /q2hbaseV4
+
+hdfs dfs -chmod -R +rwx /storeDataFileOutput1
+
+// import
+hbase org.apache.hadoop.hbase.mapreduce.LoadIncrementalHFiles /storeDataFileOutput1 q2hbaseV4
+
+

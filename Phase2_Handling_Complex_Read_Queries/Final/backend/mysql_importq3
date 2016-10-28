@@ -1,0 +1,17 @@
+// make directory for Q3
+mkdir Q3
+
+
+// fetch data
+wget https://s3.amazonaws.com/jialingbucket/q3outputV2
+
+// get into db
+mysql -u root -pccelder tweets
+
+// create new table rangequery
+CREATE TABLE rangequery (userid int unsigned NOT NULL, ymddate int unsigned NOT NULL, words TEXT NOT NULL, INDEX id_date (userid, ymddate)) PARTITION BY HASH(userid) PARTITIONS 32;
+
+
+
+ln -s <table1_output> rangequery
+mysqlimport —local -u root -pccelder tweets rangequery

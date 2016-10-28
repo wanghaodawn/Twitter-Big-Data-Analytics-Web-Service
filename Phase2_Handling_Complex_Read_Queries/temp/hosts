@@ -1,0 +1,16 @@
+127.0.0.1 localhost
+
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+172.31.6.6   data-node1
+172.31.11.47   data-node2
+172.31.8.134    data-node3
+172.31.7.3   data-node4
+172.31.5.204   data-node5
+
